@@ -193,20 +193,17 @@ $(document).ready().keydown(function( event ) {
 $lightbox.click(function(e){
    if(e.target != this) return; // only continue if the target itself has been clicked
    $overlay.hide();
-  //  location.reload();
 });
 //lightbox clicked
 $overlay.click(function(e){
    if(e.target != this) return; // only continue if the target itself has been clicked
    $overlay.hide();
-  //  location.reload();
 });
 
 //esc button pressed
 $(document).ready().keydown(function( event ) {
   if ( event.which == 27 ) {
     $overlay.hide();
-    // location.reload();
   }
 });
 
