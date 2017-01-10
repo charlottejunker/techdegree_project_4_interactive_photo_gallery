@@ -8,7 +8,7 @@ var $next = $('<button id="next"><img src="img/next.png"></button>');
 var $prev = $('<button id="prev"><img src="img/prev.png"></button>');
 
 //add img or vid to lightbox div + add caption to overlay
-$lightbox.append($prev).append($image).append($next).append($caption);;
+$lightbox.append($prev).append($image).append($next).append($caption);
 //add lightbox div to overlay
 $overlay.append($lightbox);
 //add overlay
@@ -205,14 +205,13 @@ $(document).ready().keydown(function( event ) {
 });
 
 
-//Problem: filter the images based on search as you type
-//Solution:
+//filter the images based on search as you type
 //capture key presses
 $("#search").keyup(function(){
   var currentQuery = $("#search").val().toLowerCase();
 
   //if search term is entered
-  if (currentQuery != "") {
+  if (currentQuery !== "") {
     //hide all images
     $(".content").hide();
 
