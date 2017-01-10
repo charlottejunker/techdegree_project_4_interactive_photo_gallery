@@ -51,11 +51,13 @@ function findCurrentContent(arrayOfObjects, src) {
   }
 }
 
+function iframeResize () {
+  //get width of iframe
+  var bodyWidthPx = $("body").width();
+  var iframeWidth = bodyWidthPx * 0.8;
 
-// function that animates the image on the transition
-function animateImage() {
-  $image.hide();
-  $image.fadeIn("fast");
+  //set height to 56.25% of height
+  $iframe.height(iframeWidth * 0.5625);
 }
 
 //Capture click event on link to the image
@@ -76,11 +78,10 @@ $(".content").click(function(event){
   //get child's alt attr and add caption 600px wide in desktop
   var captionText = $(this).children("img").attr("alt");
   $caption.text(captionText);
-  // else {
-  //   $("#selectedVid").hide();
-  // }
+
   //show overlay to main site - medium opacity
   $overlay.show();
+  iframeResize();
 });
 
 function next() {
@@ -98,7 +99,7 @@ function next() {
       $iframe.detach();
       $image.show();
     } else {
-      $prev.siblings("iframe").attr("src", $contentGallery[0].src);
+      $iframe.attr("src", $contentGallery[0].src);
       $iframe.insertAfter($image);
       $image.hide();
     }
@@ -113,7 +114,7 @@ function next() {
       $image.hide();
       $iframe.insertAfter($image);
       //if not moving from end to 1st
-      $prev.siblings("iframe").attr("src", $contentGallery[currentContent.location + 1].src);
+      $iframe.attr("src", $contentGallery[currentContent.location + 1].src);
     } else {
       $image.show();
       $iframe.detach();
@@ -135,7 +136,7 @@ function prev() {
     var lastContent = $contentGallery[$contentGallery.length - 1].type;
     if (lastContent === "content vid") {
       $iframe.insertAfter($image);
-      $prev.siblings("iframe").attr("src", $contentGallery[$contentGallery.length - 1].src);
+      $iframe.attr("src", $contentGallery[$contentGallery.length - 1].src);
       $image.hide();
     } else {
       $iframe.detach();
@@ -151,7 +152,7 @@ function prev() {
       $image.hide();
       $iframe.insertAfter($image);
       //if not moving from 1st to end
-      $prev.siblings("iframe").attr("src", $contentGallery[currentContent.location - 1].src);
+      $iframe.attr("src", $contentGallery[currentContent.location - 1].src);
     } else {
       $image.show();
       $iframe.detach();
@@ -163,16 +164,12 @@ function prev() {
 //capture click event
 $next.click(function() {
   next();
-  // transition to new image
-  animateImage();
 });
 
 //when prev button clicked
 //capture click event
 $prev.click(function(){
   prev();
-  //transition to new image
-  animateImage();
 });
 
 //when right arrow keyed
@@ -225,18 +222,22 @@ $("#search").keyup(function(){
       if (currentKeyword.indexOf(currentQuery) >= 0) {
         //show images that do match
         $(this).parent().show();
+        $(this).animate({
+          borderBottomWidth: "5px"
+        });
       }
     });
   } else {
     //when search term is deleted show all images again
     $(".content").show();
+    $(".content img").animate({
+      borderBottomWidth: "0px"
+    });
   }
 
 });
 
-//get width of iframe
-var bodyWidthPx = $("body").width();
-var iframeWidth = bodyWidthPx * 0.8;
-
-//set height to 56.25% of height
-$iframe.height(iframeWidth * 0.5625);
+// When the window is resized
+$(window).resize(function() {
+  iframeResize();
+});

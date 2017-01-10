@@ -32,7 +32,6 @@ form {
 .gallery img {
   width: 200px;
   height: 200px;
-  border-bottom: 0 solid #91C1F7;
 }
 
 .content {
@@ -78,11 +77,10 @@ button:focus {
 
 #selectedVid {
   display: inline;
-  vertical-align: middle;
   width: 80%;
   max-width: 800px;
-  max-height: 450px;
   margin: 0 2.5%;
+  vertical-align: middle;
   border: none;
 }
 

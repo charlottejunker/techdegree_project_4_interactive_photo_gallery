@@ -1,13 +1,14 @@
 
 var $overlay = $('<div id="overlay"></div>');
 var $lightbox = $('<div id="lightbox"></div>');
-var $content = $('<img id="selectedImg"><iframe id="selectedVid"></iframe>');
+var $image = $('<img id="selectedImg">');
+var $iframe = $('<iframe id="selectedVid"></iframe>');
 var $caption = $('<p></p>');
 var $next = $('<button id="next"><img src="img/next.png"></button>');
 var $prev = $('<button id="prev"><img src="img/prev.png"></button>');
 
 //add img or vid to lightbox div + add caption to overlay
-$lightbox.append($prev).append($content).append($next).append($caption);;
+$lightbox.append($prev).append($image).append($next).append($caption);;
 //add lightbox div to overlay
 $overlay.append($lightbox);
 //add overlay
@@ -50,29 +51,27 @@ function findCurrentContent(arrayOfObjects, src) {
   }
 }
 
-
-// function that animates the image on the transition
-function animateImage() {
-  $content.hide();
-  $content.fadeIn("fast");
-}
-
 //Capture click event on link to the image
 $(".content").click(function(event){
   event.preventDefault();
   var contentLocation = $(this).attr("href");
-  //add img to overlay
-  $("#selectedImg").attr("src", contentLocation);
+  if ($(this).hasClass("vid")) {
+    //add video to overlay
+    $iframe.insertAfter($image);
+    $iframe.attr("src", contentLocation);
+    $image.hide();
+  } else {
+    $iframe.detach();
+    $image.show();
+    //add img to overlay
+    $image.attr("src", contentLocation);
+  }
   //get child's alt attr and add caption 600px wide in desktop
   var captionText = $(this).children("img").attr("alt");
   $caption.text(captionText);
-  if ($(this).hasClass("vid")) {
-    //add video to overlay
-    $("#selectedVid").attr("src", contentLocation);
-    $("#selectedImg").hide();
-  } else {
-    $("#selectedVid").hide();
-  }
+  // else {
+  //   $("#selectedVid").hide();
+  // }
   //show overlay to main site - medium opacity
   $overlay.show();
 });
@@ -89,12 +88,12 @@ function next() {
     //access the type of the 1st in the array
     var firstContent = $contentGallery[0].type;
     if (firstContent === "content img") {
-      $("#selectedVid").hide();
-      $("#selectedImg").show();
+      $iframe.detach();
+      $image.show();
     } else {
-      $prev.siblings("iframe").attr("src", $contentGallery[0].src);
-      $("#selectedVid").show();
-      $("#selectedImg").hide();
+      $iframe.attr("src", $contentGallery[0].src);
+      $iframe.insertAfter($image);
+      $image.hide();
     }
   } else {
     //to cycle to next img
@@ -104,13 +103,13 @@ function next() {
     var nextContent = $contentGallery[currentContent.location + 1].type;
     //check the type of the next img/vid and show/hide iframe/img as necessary
     if (nextContent === "content vid") {
-      $("#selectedImg").hide();
-      $("#selectedVid").show();
+      $image.hide();
+      $iframe.insertAfter($image);
       //if not moving from end to 1st
-      $prev.siblings("iframe").attr("src", $contentGallery[currentContent.location + 1].src);
+      $iframe.attr("src", $contentGallery[currentContent.location + 1].src);
     } else {
-      $("#selectedImg").show();
-      $("#selectedVid").hide();
+      $image.show();
+      $iframe.detach();
     }
   }
 }
@@ -127,13 +126,13 @@ function prev() {
     $caption.text($contentGallery[$contentGallery.length - 1].title);
     //access the type of the last in the array
     var lastContent = $contentGallery[$contentGallery.length - 1].type;
-    if (lastContent === "content img") {
-      $("#selectedVid").hide();
-      $("#selectedImg").show();
+    if (lastContent === "content vid") {
+      $iframe.insertAfter($image);
+      $iframe.attr("src", $contentGallery[$contentGallery.length - 1].src);
+      $image.hide();
     } else {
-      $prev.siblings("iframe").attr("src", $contentGallery[$contentGallery.length - 1].src);
-      $("#selectedVid").show();
-      $("#selectedImg").hide();
+      $iframe.detach();
+      $image.show();
     }
   } else {
     //to cycle to prev img
@@ -142,13 +141,13 @@ function prev() {
     var prevContent = $contentGallery[currentContent.location - 1].type;
     //check the type of the prev img/vid and show/hide iframe/img as necessary
     if (prevContent === "content vid") {
-      $("#selectedImg").hide();
-      $("#selectedVid").show();
+      $image.hide();
+      $iframe.insertAfter($image);
       //if not moving from 1st to end
-      $prev.siblings("iframe").attr("src", $contentGallery[currentContent.location - 1].src);
+      $iframe.attr("src", $contentGallery[currentContent.location - 1].src);
     } else {
-      $("#selectedImg").show();
-      $("#selectedVid").hide();
+      $image.show();
+      $iframe.detach();
     }
   }
 }
@@ -157,16 +156,12 @@ function prev() {
 //capture click event
 $next.click(function() {
   next();
-  // transition to new image
-  animateImage();
 });
 
 //when prev button clicked
 //capture click event
 $prev.click(function(){
   prev();
-  //transition to new image
-  animateImage();
 });
 
 //when right arrow keyed
@@ -187,20 +182,17 @@ $(document).ready().keydown(function( event ) {
 $lightbox.click(function(e){
    if(e.target != this) return; // only continue if the target itself has been clicked
    $overlay.hide();
-   location.reload();
 });
 //lightbox clicked
 $overlay.click(function(e){
    if(e.target != this) return; // only continue if the target itself has been clicked
    $overlay.hide();
-   location.reload();
 });
 
 //esc button pressed
 $(document).ready().keydown(function( event ) {
   if ( event.which == 27 ) {
     $overlay.hide();
-    location.reload();
   }
 });
 
@@ -236,4 +228,4 @@ var bodyWidthPx = $("body").width();
 var iframeWidth = bodyWidthPx * 0.8;
 
 //set height to 56.25% of height
-$("#selectedVid").height(iframeWidth * 0.5625);
+$iframe.height(iframeWidth * 0.5625);
